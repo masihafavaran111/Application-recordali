@@ -66,7 +66,7 @@ jobs:
 
           test -f "$ANDROID_HOME/platform-tools/adb"
           test -f "$ANDROID_HOME/platforms/android-35/android.jar"
-          test -f "$ANDROID_HOME/build-tools/37.0.0/aidl"
+          test -f "$ANDROID_HOME/build-tools/35.0.0/aidl"
 
           echo "Android SDK is ready!"
 
