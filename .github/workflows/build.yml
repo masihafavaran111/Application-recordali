@@ -44,14 +44,26 @@ jobs:
             gettext
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v4
+        uses: android-actions/setup-android@v3
         with:
+          packages: |
+            platform-tools
+            platforms;android-35
+            build-tools;35.0.0
+            build-tools;37.0.0
           accept-android-sdk-licenses: true
 
-      - name: Install Android SDK packages
+      - name: Accept Android SDK licenses
         run: |
           yes | sdkmanager --licenses || true
-          sdkmanager "platform-tools" "platforms;android-33" "build-tools;35.0.0"
+
+      - name: Verify Android SDK
+        run: |
+          sdkmanager --list
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          ls -la "$ANDROID_HOME/build-tools"
+          ls -la "$ANDROID_HOME/build-tools/37.0.0"
+          test -f "$ANDROID_HOME/build-tools/37.0.0/aidl"
 
       - name: Install Buildozer
         run: |
