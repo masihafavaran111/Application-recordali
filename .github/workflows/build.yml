@@ -16,11 +16,12 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Setup Java
+      # Java 8 برای ابزارهای قدیمی Android SDK
+      - name: Setup Java 8
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "17"
+          java-version: "8"
 
       - name: Install Linux dependencies
         run: |
@@ -60,6 +61,8 @@ jobs:
         run: |
           echo "ANDROID_HOME=$ANDROID_HOME"
           echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+          echo "Java version:"
+          java -version
 
           sdkmanager --list_installed
 
@@ -68,6 +71,18 @@ jobs:
           test -f "$ANDROID_HOME/build-tools/35.0.0/aidl"
 
           echo "Android SDK is ready!"
+
+      # Java 17 برای Buildozer / Gradle
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Verify Java 17
+        run: |
+          echo "Java version:"
+          java -version
 
       - name: Install Buildozer
         run: |
