@@ -45,25 +45,30 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-        with:
-          packages: |
-            platform-tools
-            platforms;android-35
-            build-tools;35.0.0
-            build-tools;37.0.0
-          accept-android-sdk-licenses: true
 
-      - name: Accept Android SDK licenses
+      - name: Install Android SDK packages
         run: |
+          yes | sdkmanager --licenses || true
+
+          sdkmanager "platform-tools"
+          sdkmanager "platforms;android-35"
+          sdkmanager "build-tools;35.0.0"
+          sdkmanager "build-tools;37.0.0"
+
           yes | sdkmanager --licenses || true
 
       - name: Verify Android SDK
         run: |
-          sdkmanager --list
           echo "ANDROID_HOME=$ANDROID_HOME"
-          ls -la "$ANDROID_HOME/build-tools"
-          ls -la "$ANDROID_HOME/build-tools/37.0.0"
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+
+          sdkmanager --list_installed
+
+          test -f "$ANDROID_HOME/platform-tools/adb"
+          test -f "$ANDROID_HOME/platforms/android-35/android.jar"
           test -f "$ANDROID_HOME/build-tools/37.0.0/aidl"
+
+          echo "Android SDK is ready!"
 
       - name: Install Buildozer
         run: |
