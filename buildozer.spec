@@ -1,48 +1,29 @@
-name: Build Android APK
+[app]
 
-on:
-  workflow_dispatch:
+title = Favaran Record
+package.name = favaranrecord
+package.domain = org.favaran
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+source.dir = .
+source.include_exts = py,png,jpg,jpeg,wav,mp3
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+version = 1.0
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
+requirements = python3,kivy
 
-      - name: Install Linux dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y \
-            git zip unzip \
-            openjdk-17-jdk \
-            autoconf automake libtool libltdl-dev \
-            pkg-config \
-            zlib1g-dev \
-            libncurses5-dev libncursesw5-dev \
-            libtinfo6 \
-            cmake \
-            libffi-dev \
-            libssl-dev \
-            autopoint gettext
+orientation = portrait
+fullscreen = 0
 
-      - name: Install Buildozer
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install buildozer cython==0.29.33
 
-      - name: Build APK
-        run: |
-          buildozer android debug
+[buildozer]
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Favaran-Record-APK
-          path: bin/*.apk
+log_level = 2
+warn_on_root = 1
+
+
+[app:android]
+
+android.api = 33
+android.minapi = 21
+android.archs = arm64-v8a,armeabi-v7a
+android.accept_sdk_license = True
