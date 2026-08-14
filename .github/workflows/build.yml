@@ -22,6 +22,12 @@ jobs:
           distribution: temurin
           java-version: "17"
 
+      - name: Verify Java
+        run: |
+          echo "Java version:"
+          java -version
+          echo "JAVA_HOME=$JAVA_HOME"
+
       - name: Install Linux dependencies
         run: |
           sudo apt update
@@ -44,7 +50,7 @@ jobs:
             gettext
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
 
       - name: Install Android SDK packages
         run: |
@@ -64,6 +70,10 @@ jobs:
           echo "Java version:"
           java -version
 
+          echo "SDK Manager:"
+          which sdkmanager
+          sdkmanager --version
+
           echo "Installed Android SDK packages:"
           sdkmanager --list_installed
 
@@ -76,7 +86,14 @@ jobs:
       - name: Install Buildozer
         run: |
           python -m pip install --upgrade pip
-          python -m pip install buildozer cython
+          python -m pip install buildozer setuptools cython==0.29.34
+
+      - name: Verify Buildozer
+        run: |
+          python --version
+          pip --version
+          buildozer --version
+          cython --version
 
       - name: Connect Buildozer to Android SDK
         run: |
@@ -98,3 +115,4 @@ jobs:
         with:
           name: Favaran-Record-APK
           path: bin/*.apk
+          if-no-files-found: error
