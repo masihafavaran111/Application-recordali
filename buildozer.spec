@@ -1,8 +1,10 @@
 [app]
+
 title = Favaran Record
 source.dir = .
 package.name = favaranrecord
 version = 1.0
+
 on:
   workflow_dispatch:
 
