@@ -1,29 +1,70 @@
-[app]
+name: Build Android APK
 
-title = Favaran Record
-package.name = favaranrecord
-package.domain = org.favaran
+on:
+  workflow_dispatch:
 
-source.dir = .
-source.include_exts = py,png,jpg,jpeg,wav,mp3
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-version = 1.0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-requirements = python3,kivy
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
-orientation = portrait
-fullscreen = 0
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
 
+      - name: Install Linux dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            git \
+            zip \
+            unzip \
+            autoconf \
+            automake \
+            libtool \
+            pkg-config \
+            zlib1g-dev \
+            libncurses5-dev \
+            libncursesw5-dev \
+            libtinfo6 \
+            cmake \
+            libffi-dev \
+            libssl-dev \
+            autopoint \
+            gettext
 
-[buildozer]
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          accept-android-sdk-licenses: "yes"
 
-log_level = 2
-warn_on_root = 1
+      - name: Install Android SDK packages
+        run: |
+          yes | sdkmanager --licenses || true
+          sdkmanager "platform-tools" "platforms;android-33" "build-tools;37.0.0"
 
+      - name: Install Buildozer
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install buildozer cython
 
-[app:android]
+      - name: Build APK
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          buildozer android debug
 
-android.api = 33
-android.minapi = 21
-android.archs = arm64-v8a,armeabi-v7a
-android.accept_sdk_license = True
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Favaran-Record-APK
+          path: bin/*.apk
